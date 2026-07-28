@@ -58,7 +58,7 @@ When tests are not enough, use a throwaway local server / fixture (and remember 
 - terminal sync and async execution both block the same destructive command fixtures before process creation, while inert quoted examples and documented safer variants remain allowed;
 - admin-store files are mode-restricted, corrupt security JSON fails closed, and an interrupted transaction journal is replayed before state is exposed;
 - malformed/oversized enrollment and admin request bodies fail schema validation instead of being string-coerced;
-- privilege grants are explicit, missing grants are denied, inspect-only clients cannot see or call mutation/terminal/system/admin tools, propose clients can only call dry-run-capable filesystem tools with `dryRun=true`, and workspace binding outside the grant is denied;
+- privilege grants are explicit, missing grants are denied, inspect-only clients cannot see or call mutation/terminal/system/admin tools, inspect-only clients can call dry-run-capable filesystem preview tools only with `dryRun=true`, and workspace binding outside the grant is denied;
 - enrollment endpoints throttle repeated request / status polling;
 - port validation rejects invalid or colliding main / admin ports;
 - admission-enabled GET/DELETE authenticate before reporting missing/unknown MCP sessions;
