@@ -6,6 +6,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+ROOT=Path(__file__).resolve().parents[1]
+sys.path.insert(0,str(ROOT))
+
 HEADERS={"User-Agent":"conduit-client-admission/3","ngrok-skip-browser-warning":"1","Accept":"application/json"}
 STATE_HOME=Path(os.getenv("CONDUIT_STATE_HOME","/home/user")); AUTH=STATE_HOME/".conduit_auth.json"; RESUME=STATE_HOME/".conduit_enrollment.json"; REPORT=STATE_HOME/".conduit_admission_report.json"
 
@@ -48,7 +51,7 @@ def load_envelope(path:Path,allow_expired_resume:bool=False)->dict[str,Any]:
  if any(h.get(k)!=v for k,v in expected.items()): fail("unsupported credential-handling policy")
  return d
 def verify_source(d:dict[str,Any])->dict[str,str]:
- root=Path(__file__).resolve().parents[1]; c=d["client"]
+ root=ROOT; c=d["client"]
  if c.get("entrypoint")!="client/conduit_admission.py" or not re.fullmatch(r"[0-9a-f]{40}",str(c.get("commit",""))): fail("invalid client source pin")
  try:
   head=subprocess.check_output(["git","rev-parse","HEAD"],cwd=root,text=True).strip(); remote=subprocess.check_output(["git","remote","get-url","origin"],cwd=root,text=True).strip()
