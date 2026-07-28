@@ -14,8 +14,8 @@ This task contains synthetic data only and does not authorize live Conduit acces
 8. Run:
 
 ```bash
-python3 /home/user/conduit-arena-admission/candidate/conduit_candidate.py validate --workspace /home/user/conduit-candidate
-python3 /home/user/conduit-arena-admission/candidate/conduit_candidate.py verify --workspace /home/user/conduit-candidate --report /home/user/conduit-candidate/report.json
+python3 /home/user/conduit-client/candidate/conduit_candidate.py validate --workspace /home/user/conduit-candidate
+python3 /home/user/conduit-client/candidate/conduit_candidate.py verify --workspace /home/user/conduit-candidate --report /home/user/conduit-candidate/report.json
 ```
 
 9. Present `report.json` to the operator and summarize all findings and limitations.

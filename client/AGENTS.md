@@ -1,6 +1,6 @@
 # Portable Conduit client instructions
 
-This contract travels with the bootstrap client. A remote project may provide
+This contract belongs to the public source-first Conduit client. A remote project may provide
 its own `AGENTS.md`; read and follow that project guidance after connecting.
 
 ## Onboarding

@@ -16,7 +16,7 @@
 - **Admin API token gate:** the loopback admin API requires `X-Admin-Token` matching the generated `admin-api-key.txt`. Missing expected-token state or a mismatched / missing request token is unauthorized.
 - **Configuration assertions:** `PORT` and `CONDUIT_ADMIN_PORT` must be valid, distinct TCP ports; invalid or colliding values abort startup.
 - **Registered workspace context only:** tools accept workspace-relative paths and cannot override the active root. Use `workspace.bind` to select an allowed registered workspace and `workspace.add` only with admin privilege.
-- **Deep health protection:** shallow health remains public for bootstrap discovery. Deep diagnostics require an approved token on configured public deployments and omit workspace roots, workspace ids/names, and workspace counts.
+- **Deep health protection:** shallow health remains public for source-client discovery. Deep diagnostics require an approved token on configured public deployments and omit workspace roots, workspace ids/names, and workspace counts.
 - **Terminal environment minimization:** terminal commands receive an allowlisted environment plus caller-provided overrides, rather than the full server process environment. Configure passthrough with `CONDUIT_TERMINAL_ENV_PASSTHROUGH` when needed.
 - **Terminal destructive-command guard:** both sync and async terminal commands pass through one service-level pre-spawn evaluator. High-confidence raw destructive Git/filesystem commands are blocked with stable rule metadata and semantic-tool remediation; blocked-command logs store a SHA-256 fingerprint rather than raw command text.
 - **Admin-store fail-closed persistence:** admin token / signing / client files are written with restrictive permissions, corrupt security JSON causes a loud startup / API error, and multi-file invite/request/client transitions use a write-ahead snapshot journal that is replayed after an interrupted write.
@@ -48,7 +48,7 @@ When tests are not enough, use a throwaway local server / fixture (and remember 
 
 - crawler User-Agent to a non-`/robots.txt` route returns `403 Forbidden`;
 - the same crawler User-Agent can read `/robots.txt`;
-- authorized non-crawler Conduit clients (`conduit-bootstrap`, `conduit-doctor`, CLI) are not blocked by crawler middleware;
+- authorized non-crawler Conduit clients (`conduit-client-admission`, `conduit-doctor`, CLI) are not blocked by crawler middleware;
 - invalid `CRAWLER_BYPASS_AGENTS` does not crash request handling and does not create an unintended allow-all bypass;
 - admin endpoints reject missing / wrong `X-Admin-Token`;
 - public / non-loopback exposure does not accidentally leave MCP unauthenticated;
@@ -61,11 +61,10 @@ When tests are not enough, use a throwaway local server / fixture (and remember 
 - privilege grants are explicit, missing grants are denied, inspect-only clients cannot see or call mutation/terminal/system/admin tools, propose clients can only call dry-run-capable filesystem tools with `dryRun=true`, and workspace binding outside the grant is denied;
 - enrollment endpoints throttle repeated request / status polling;
 - port validation rejects invalid or colliding main / admin ports;
-- the client bundle (`/client/manifest.json` + `/client/file`) rejects existing and nonexistent hidden/auth/state/key/lock fixtures with the same bounded 400 response and never lists them in the manifest;
 - admission-enabled GET/DELETE authenticate before reporting missing/unknown MCP sessions;
 - foreign Origins receive `403`; configured-origin preflight remains wildcard without allow-credentials and never bypasses bearer authentication;
 - unknown public routes return bounded JSON 404 responses without reflecting the route path.
 
 Do not weaken a guard to make a flaky test pass. If a legitimate automation tool is blocked with 403, document and configure a narrow `CRAWLER_BYPASS_AGENTS` pattern rather than removing crawler protection.
 
-- Deep health diagnostics require an approved bearer token when `PUBLIC_BASE_URL` is non-loopback; shallow health remains public for bootstrap discovery.
+- Deep health diagnostics require an approved bearer token when `PUBLIC_BASE_URL` is non-loopback; shallow health remains public for source-client discovery.

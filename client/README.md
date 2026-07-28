@@ -66,58 +66,25 @@ compact JSON value to stdout.
 The bridge creates and terminates its own session per invocation unless an 
 external `CONDUIT_SESSION_ID` is supplied.
 
-## Bootstrap and admission
+## Source-first admission and direct handoff
 
-### Direct Local Credential Handoff
-
-This is a local operator credential handoff for a sandbox where the Conduit client is already installed. It does not install the SDK, perform Arena enrollment, or bypass a model/platform prohibition on external connections. The command requires an explicit lifecycle, server URL, grant, and private output path; it never prints the bearer token. (Recommended for restricted agents & sandboxes)
-
-Agents or environments that cannot or refuse to run external bootstrap scripts can authenticate declaratively without participating in invite enrollment:
-
-1. **Option A: Environment Variables**:
-   Set `CONDUIT_CLIENT_TOKEN` and canonical `CONDUIT_URL` in the environment. The Python SDK directly uses these credentials.
-
-2. **Option B: Direct Auth File**:
-   Generate a pre-issued credential using:
-   ```bash
-   npm run admin -- client issue-direct --label "Agent" --lifecycle active --server-url "https://approved.example/conduit-local" --privilege inspect --workspace default --default-workspace default --out ~/.conduit_auth.json
-   ```
-   The `.conduit_auth.json` file is written with mode `0600` and loaded directly by `ConduitAuthState` / `Conduit` SDK without any script execution or polling loop.
-
-### Scripted Enrollment Flow
-
-Set `CONDUIT_URL`, then run `python3 bootstrap_conduit_client.py --overwrite
---install-deps --verify`. With client admission enabled, provide the invite id and secret for enrollment.
-Admission is privilege-scoped: the operator-created invite or approval must grant
-explicit privileges and workspace ids. Bootstrap can request a scope, but the
-server/admin grant remains authoritative. Example observer enrollment request:
+For invite enrollment or promotion, the operator supplies one schema-v3 envelope pinned to an exact commit of this repository:
 
 ```bash
-python3 bootstrap_conduit_client.py --overwrite --install-deps --verify \
-  --request-privilege inspect \
-  --request-privilege propose \
-  --request-workspace bar-coop-sys \
-  --request-default-workspace bar-coop-sys
+git checkout <client.commit from conduit_provisioning.json>
+python3 client/conduit_admission.py inspect --provisioning /home/user/conduit_provisioning.json
+python3 client/conduit_admission.py enroll --provisioning /home/user/conduit_provisioning.json
 ```
 
-Bootstrap writes the approved token to `.conduit_auth.json` and the normalized
-connection URL to `.env`.
+The admission CLI executes no server-supplied code. It validates the clone/commit, submits or resumes enrollment, verifies the actual visible workspace grant, atomically writes `/home/user/.conduit_auth.json` at mode `0600`, removes resume state after success, and writes `/home/user/.conduit_admission_report.json`.
 
-While approval is pending, bootstrap stores a narrowly scoped resume capability at
-`~/.conduit_enrollment.json` with mode `0600`. It contains no invite secret and is
-bound to the server, invite, and provisioning ID. The same bootstrap command may
-remain polling or be stopped and rerun after approval. Bootstrap removes this file
-only after the approved credential has been verified and atomically persisted (or
-a denial is observed). After the first approved-token response, recovery remains
-available for two hours; beyond that, revoke and reprovision the inaccessible client. Never reveal, upload, edit, or copy it into a Conduit
-workspace.
+For a trusted sandbox where this source is already installed, the local operator may instead issue a direct auth file. This bypasses invite enrollment only; it cannot bypass a model or platform prohibition on external connections.
 
-`./conduit doctor` returns compact readiness JSON without creating an MCP
-session.
+`python3 client/conduit_cli.py doctor` performs compact readiness diagnostics without creating an MCP session.
 
 ## Protocol and retry policy
 
-The client negotiates MCP `2025-11-25`, sends `notifications/initialized`, and includes the negotiated `MCP-Protocol-Version` on subsequent requests. Retry classification is not handwritten in Python: `client/conduit/tool-policy.json` is generated from the server's canonical `src/server/tool-manifest.ts` during `npm run build`, and the client fails fast if the generated policy is absent or invalid.
+The client negotiates MCP `2025-11-25`, sends `notifications/initialized`, and includes the negotiated `MCP-Protocol-Version` on subsequent requests. Retry classification is not handwritten in Python. `client/conduit/tool-policy.json` is synchronized byte-for-byte from the server's canonical generated policy; the client fails fast if it is absent or invalid.
 
 ## Recovery
 

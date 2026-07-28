@@ -2,7 +2,7 @@
 """Minimal JSON bridge for Conduit Local's native async SDK.
 
 The supported agent interface is ``async with Conduit()``. This command is a
-one-shot bootstrap/debug escape hatch: it opens one in-memory session, performs 
+one-shot diagnostic escape hatch: it opens one in-memory session, performs 
 one request, emits compact structured JSON, and ends the session.
 It intentionally has no aliases, assertion language, or local result files.
 """

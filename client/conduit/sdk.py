@@ -27,7 +27,7 @@ _CLIENT_ENV_KEYS = {
 
 
 def _client_env_path() -> Path:
-    """Return the bootstrap-managed env file beside the client bundle root."""
+    """Return the source-client env file beside the client bundle root."""
     return Path(__file__).resolve().parents[2] / ".env"
 
 
@@ -39,7 +39,7 @@ def _strip_env_quotes(value: str) -> str:
 
 
 def _load_client_env_defaults(env_path: Path | None = None) -> dict[str, str]:
-    """Read safe bootstrap defaults without mutating process environment."""
+    """Read safe client defaults without mutating process environment."""
     path = env_path or _client_env_path()
     try:
         lines = path.read_text(encoding="utf-8").splitlines()
