@@ -63,7 +63,7 @@ class AuthError(ConduitError):
         if reason == "AUTH_REQUIRED":
             hint = (
                 "The server requires an approved client token, but this client sent none. "
-                "Run the bootstrap to enroll, or export CONDUIT_CLIENT_TOKEN "
+                "Run the source admission CLI to enroll, or provide CONDUIT_CLIENT_TOKEN "
                 "(token file default: ~/.conduit_auth.json, override with CONDUIT_AUTH_PATH)."
             )
         elif reason == "SESSION_CLIENT_MISMATCH":

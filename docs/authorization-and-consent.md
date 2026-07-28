@@ -1,6 +1,6 @@
 # Authorization and consent
 
-A Conduit provisioning envelope is purpose-bound authorization to contact only its declared server, verify only its declared bootstrap, and submit exactly one enrollment request. Access is issued only after separate local approval.
+A Conduit provisioning envelope is purpose-bound authorization to contact only its declared server, use only its pinned public client source, and submit exactly one enrollment request. Access is issued only after separate local approval.
 
 ## Authorization classes
 

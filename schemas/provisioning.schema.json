@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/Jesrey0/conduit-arena-admission/provisioning/provisioning.schema.json",
+  "$id": "https://github.com/Jesrey0/conduit-client/schemas/provisioning.schema.json",
   "title": "Conduit Arena Provisioning Envelope",
   "type": "object",
   "additionalProperties": false,
