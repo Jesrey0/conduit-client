@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Conduit Arena Candidate Report",
+  "type": "object",
+  "required": ["protocol", "version", "evidenceKind", "operatorHadSandboxAccess", "evaluatorIndependence", "networkUseObservedByVerifier", "outcome", "findings", "limitations"],
+  "properties": {
+    "protocol": { "const": "conduit-arena-candidate" },
+    "version": { "const": 1 },
+    "outcome": { "enum": ["COMPLETE", "REVIEW_REQUIRED", "INCOMPLETE", "INVALID_EVIDENCE"] },
+    "findings": { "type": "array" },
+    "limitations": { "type": "array", "items": { "type": "string" } }
+  }
+}

@@ -1,0 +1,190 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Jesrey0/conduit-arena-admission/provisioning/provisioning.schema.json",
+  "title": "Conduit Arena Provisioning Envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "provisioningId",
+    "purpose",
+    "lifecycle",
+    "authorization",
+    "server",
+    "requestedGrant",
+    "invite",
+    "bootstrap",
+    "credentialHandling"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 2
+    },
+    "provisioningId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "purpose": {
+      "enum": [
+        "ENROLLMENT",
+        "PROMOTE_CLIENT"
+      ]
+    },
+    "lifecycle": {
+      "enum": [
+        "probation",
+        "active"
+      ]
+    },
+    "replacesClientId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "authorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "accessClass",
+        "issuedAt",
+        "expiresAt",
+        "approvalRequired"
+      ],
+      "properties": {
+        "state": {
+          "const": "AUTHORIZED_TO_REQUEST_ENROLLMENT"
+        },
+        "accessClass": {
+          "enum": [
+            "LIVE_PROBATION",
+            "REGULAR_OPERATOR_PROMOTION"
+          ]
+        },
+        "issuedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "approvalRequired": {
+          "const": true
+        }
+      }
+    },
+    "server": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "url"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https?://"
+        }
+      }
+    },
+    "requestedGrant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "privileges",
+        "workspaceIds"
+      ],
+      "properties": {
+        "privileges": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "inspect",
+              "propose",
+              "mutate",
+              "execute",
+              "system",
+              "admin"
+            ]
+          }
+        },
+        "workspaceIds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "defaultWorkspaceId": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "invite": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "secret",
+        "singleUse"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "secret": {
+          "type": "string",
+          "minLength": 1
+        },
+        "singleUse": {
+          "const": true
+        }
+      }
+    },
+    "bootstrap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "url",
+        "sha256"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https?://"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    },
+    "credentialHandling": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "resultingAuthPath",
+        "enrollmentResumePath",
+        "requiredMode"
+      ],
+      "properties": {
+        "resultingAuthPath": {
+          "const": "/home/user/.conduit_auth.json"
+        },
+        "requiredMode": {
+          "const": "0600"
+        },
+        "enrollmentResumePath": {
+          "const": "/home/user/.conduit_enrollment.json"
+        }
+      }
+    }
+  }
+}
