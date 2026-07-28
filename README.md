@@ -29,6 +29,18 @@ async def main():
 asyncio.run(main())
 ```
 
+## Source-first admission
+
+The operator supplies one schema-v3 `conduit_provisioning.json` pinned to an exact commit of this repository.
+
+```bash
+git checkout <commit-from-envelope>
+python3 client/conduit_admission.py inspect --provisioning /home/user/conduit_provisioning.json
+python3 client/conduit_admission.py enroll --provisioning /home/user/conduit_provisioning.json
+```
+
+The admission tool executes no server-supplied code. It enrolls or resumes, verifies the workspace grant with the cloned SDK, atomically writes mode-`0600` auth, and emits a private safe report.
+
 ## Candidate assessment
 
 ```bash

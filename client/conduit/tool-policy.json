@@ -1,0 +1,140 @@
+{
+  "schemaVersion": 1,
+  "tools": {
+    "filesystem.batch": {
+      "retry": "idempotency-key"
+    },
+    "filesystem.copy": {
+      "retry": "idempotency-key"
+    },
+    "filesystem.delete": {
+      "retry": "idempotency-key"
+    },
+    "filesystem.delete-batch": {
+      "retry": "idempotency-key"
+    },
+    "filesystem.edit": {
+      "retry": "idempotency-key"
+    },
+    "filesystem.find": {
+      "retry": "read-safe"
+    },
+    "filesystem.grep": {
+      "retry": "read-safe"
+    },
+    "filesystem.info": {
+      "retry": "read-safe"
+    },
+    "filesystem.list": {
+      "retry": "read-safe"
+    },
+    "filesystem.mkdir": {
+      "retry": "idempotency-key"
+    },
+    "filesystem.move": {
+      "retry": "idempotency-key"
+    },
+    "filesystem.read": {
+      "retry": "read-safe"
+    },
+    "filesystem.read-media": {
+      "retry": "read-safe"
+    },
+    "filesystem.read-multi": {
+      "retry": "read-safe"
+    },
+    "filesystem.tree": {
+      "retry": "read-safe"
+    },
+    "filesystem.write": {
+      "retry": "idempotency-key"
+    },
+    "git.add": {
+      "retry": "idempotency-key"
+    },
+    "git.branch": {
+      "retry": "read-safe"
+    },
+    "git.checkout": {
+      "retry": "idempotency-key"
+    },
+    "git.commit": {
+      "retry": "idempotency-key"
+    },
+    "git.create-branch": {
+      "retry": "idempotency-key"
+    },
+    "git.diff": {
+      "retry": "read-safe"
+    },
+    "git.diff-staged": {
+      "retry": "read-safe"
+    },
+    "git.diff-unstaged": {
+      "retry": "read-safe"
+    },
+    "git.log": {
+      "retry": "read-safe"
+    },
+    "git.reset": {
+      "retry": "idempotency-key"
+    },
+    "git.restore": {
+      "retry": "idempotency-key"
+    },
+    "git.show": {
+      "retry": "read-safe"
+    },
+    "git.status": {
+      "retry": "read-safe"
+    },
+    "runtime.health": {
+      "retry": "read-safe"
+    },
+    "search": {
+      "retry": "read-safe"
+    },
+    "system.dependencies": {
+      "retry": "read-safe"
+    },
+    "system.info": {
+      "retry": "read-safe"
+    },
+    "system.resources": {
+      "retry": "read-safe"
+    },
+    "terminal.attach": {
+      "retry": "read-safe"
+    },
+    "terminal.exec": {
+      "retry": "never"
+    },
+    "terminal.exec_async": {
+      "retry": "never"
+    },
+    "terminal.run_script": {
+      "retry": "never"
+    },
+    "terminal.run_script_async": {
+      "retry": "never"
+    },
+    "terminal.stop": {
+      "retry": "never"
+    },
+    "workspace.add": {
+      "retry": "never"
+    },
+    "workspace.bind": {
+      "retry": "read-safe"
+    },
+    "workspace.current": {
+      "retry": "read-safe"
+    },
+    "workspace.list": {
+      "retry": "read-safe"
+    },
+    "workspace.remove": {
+      "retry": "never"
+    }
+  }
+}
