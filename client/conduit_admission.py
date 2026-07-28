@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Any
 
 HEADERS={"User-Agent":"conduit-client-admission/3","ngrok-skip-browser-warning":"1","Accept":"application/json"}
-AUTH=Path("/home/user/.conduit_auth.json"); RESUME=Path("/home/user/.conduit_enrollment.json"); REPORT=Path("/home/user/.conduit_admission_report.json")
+STATE_HOME=Path(os.getenv("CONDUIT_STATE_HOME","/home/user")); AUTH=STATE_HOME/".conduit_auth.json"; RESUME=STATE_HOME/".conduit_enrollment.json"; REPORT=STATE_HOME/".conduit_admission_report.json"
 
 def fail(msg:str)->None: print(f"admission error: {msg}",file=sys.stderr); raise SystemExit(1)
 def atomic_json(path:Path,data:dict[str,Any])->None:
@@ -44,7 +44,7 @@ def load_envelope(path:Path,allow_expired_resume:bool=False)->dict[str,Any]:
  g=d["requestedGrant"]
  if not isinstance(g,dict) or not g.get("privileges") or not g.get("workspaceIds"): fail("empty requested grant")
  h=d["credentialHandling"]
- expected={"resultingAuthPath":str(AUTH),"enrollmentResumePath":str(RESUME),"admissionReportPath":str(REPORT),"requiredMode":"0600"}
+ expected={"resultingAuthPath":"/home/user/.conduit_auth.json","enrollmentResumePath":"/home/user/.conduit_enrollment.json","admissionReportPath":"/home/user/.conduit_admission_report.json","requiredMode":"0600"}
  if any(h.get(k)!=v for k,v in expected.items()): fail("unsupported credential-handling policy")
  return d
 def verify_source(d:dict[str,Any])->dict[str,str]:
