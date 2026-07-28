@@ -11,14 +11,14 @@
     "lifecycle",
     "authorization",
     "server",
+    "client",
     "requestedGrant",
     "invite",
-    "bootstrap",
     "credentialHandling"
   ],
   "properties": {
     "schemaVersion": {
-      "const": 2
+      "const": 3
     },
     "provisioningId": {
       "type": "string",
@@ -147,31 +147,13 @@
         }
       }
     },
-    "bootstrap": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "url",
-        "sha256"
-      ],
-      "properties": {
-        "url": {
-          "type": "string",
-          "format": "uri",
-          "pattern": "^https?://"
-        },
-        "sha256": {
-          "type": "string",
-          "pattern": "^[a-f0-9]{64}$"
-        }
-      }
-    },
     "credentialHandling": {
       "type": "object",
       "additionalProperties": false,
       "required": [
         "resultingAuthPath",
         "enrollmentResumePath",
+        "admissionReportPath",
         "requiredMode"
       ],
       "properties": {
@@ -183,6 +165,34 @@
         },
         "enrollmentResumePath": {
           "const": "/home/user/.conduit_enrollment.json"
+        },
+        "admissionReportPath": {
+          "const": "/home/user/.conduit_admission_report.json"
+        }
+      }
+    },
+    "client": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repository",
+        "commit",
+        "entrypoint",
+        "minimumPython"
+      ],
+      "properties": {
+        "repository": {
+          "const": "https://github.com/Jesrey0/conduit-client"
+        },
+        "commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "entrypoint": {
+          "const": "client/conduit_admission.py"
+        },
+        "minimumPython": {
+          "const": "3.12"
         }
       }
     }
