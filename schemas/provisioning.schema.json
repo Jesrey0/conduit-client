@@ -102,13 +102,13 @@
           "items": {
             "enum": [
               "inspect",
-              "propose",
               "mutate",
               "execute",
               "system",
               "admin"
             ]
-          }
+          },
+          "maxItems": 5
         },
         "workspaceIds": {
           "type": "array",
