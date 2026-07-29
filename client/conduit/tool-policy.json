@@ -91,6 +91,9 @@
     "runtime.health": {
       "retry": "read-safe"
     },
+    "runtime.whoami": {
+      "retry": "read-safe"
+    },
     "search": {
       "retry": "read-safe"
     },
