@@ -82,6 +82,34 @@ For a trusted sandbox where this source is already installed, the local operator
 
 `python3 client/conduit_cli.py doctor` performs compact readiness diagnostics without creating an MCP session.
 
+## Python SDK naming
+
+SDK methods are camelCase; their keyword arguments are Python `snake_case`. The SDK
+converts those keywords to the MCP wire fields, which are camelCase — so `max_depth`
+becomes `maxDepth` and `repo_path` becomes `repoPath` on the wire. Write `snake_case` in
+Python and expect camelCase in returned structured content. No `camelCase` keyword aliases
+are provided.
+
+The table below covers the calls whose naming is most often guessed wrong. Signatures are
+abbreviated; check `client/conduit/sdk.py` for the full parameter list.
+
+| Purpose | Python SDK call | Important kwargs |
+|---|---|---|
+| List directory | `c.files.listDir(path=".")` | `recursive` — the method is `listDir`, not `list` |
+| Find files | `c.files.find(pattern=..., path=".")` | `max_depth`, `include_patterns`, `exclude_patterns`, `respect_gitignore` |
+| Read text | `c.files.read(path)` | `start_index`, `max_length`, `head`, `tail` (no `start_line`/`end_line` kwargs in the SDK) |
+| Read many | `c.files.readMulti(paths)` | `max_length_per_file`, `max_total_length` |
+| Grep | `c.files.grep(pattern, path=".")` | `before_context`, `after_context`, `max_output_length`, `timeout_ms` (no `regex` kwarg) |
+| Git status | `c.git.status(repo_path=".")` | `repo_path` |
+| Git log | `c.git.log(repo_path=".")` | `limit` (not `maxCount`), `cursor`, `start_timestamp`, `end_timestamp` |
+| Terminal execution | `c.terminal.exec(executable, args)` | `path`, `timeout_ms` (sync ceiling 120000), `env` |
+| Script execution | `c.terminal.runScript(script)` | `interpreter` (default `bash`), `interpreter_args`, `args`, `extension`, `cleanup`, `path`, `timeout_ms`, `env` |
+
+`c.files.read`'s `start_index`/`max_length` use JavaScript decoded-string indexing
+(UTF-16 code-unit offsets) — not line numbers, Unicode code-point indexes, or raw file-byte offsets. Use `head`/`tail` for line-oriented
+reads, and resume with the returned `nextStartIndex`.
+
+
 ## Protocol and retry policy
 
 The client negotiates MCP `2025-11-25`, sends `notifications/initialized`, and includes the negotiated `MCP-Protocol-Version` on subsequent requests. Retry classification is not handwritten in Python. `client/conduit/tool-policy.json` is synchronized byte-for-byte from the server's canonical generated policy; the client fails fast if it is absent or invalid.
