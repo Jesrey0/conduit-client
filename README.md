@@ -92,6 +92,9 @@ python3 candidate/conduit_candidate.py inspect
 - Keep `/home/user/.conduit_auth.json` a regular current-user-owned file at mode `0600`.
 - Never print or upload bearer tokens.
 - The server-side grant and projected MCP tools are authoritative.
+- An `inspect`-only client is still projected dry-run-capable filesystem tools, prefixed
+  `[preview only — requires dryRun=true]`. Check `runtime.whoami.previewOnlyTools` for the
+  exact set rather than assuming a listed tool is callable.
 - A public client cannot override a model/platform prohibition on external connections.
 
 See `SECURITY.md` and `client/AGENTS.md`.
