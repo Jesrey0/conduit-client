@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "keys": [
+    {
+      "keyId": "operator-f490ee0413ff3cfa",
+      "algorithm": "Ed25519",
+      "publicKey": "MCowBQYDK2VwAyEAn7lR1EiO6C3nSpD2-Th6zY3FUzrRpMx1bC-pAZ__tJQ",
+      "status": "active",
+      "notBefore": "2026-07-30T04:47:29.789Z"
+    }
+  ]
+}

@@ -7,7 +7,7 @@ name = "conduit-client"
 version = "0.1.0.dev0"
 description = "Source-first Python SDK and admission client for Conduit Local"
 requires-python = ">=3.12"
-dependencies = ["httpx>=0.28,<0.29"]
+dependencies = ["httpx>=0.28,<0.29", "cryptography>=44,<46"]
 
 [tool.setuptools.packages.find]
 include = ["client*"]

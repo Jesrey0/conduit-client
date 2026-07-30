@@ -14,11 +14,12 @@
     "client",
     "requestedGrant",
     "invite",
-    "credentialHandling"
+    "credentialHandling",
+    "signature"
   ],
   "properties": {
     "schemaVersion": {
-      "const": 3
+      "const": 4
     },
     "provisioningId": {
       "type": "string",
@@ -193,6 +194,28 @@
         },
         "minimumPython": {
           "const": "3.12"
+        }
+      }
+    },
+    "signature": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "algorithm",
+        "keyId",
+        "value"
+      ],
+      "properties": {
+        "algorithm": {
+          "const": "Ed25519"
+        },
+        "keyId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "value": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]+$"
         }
       }
     }

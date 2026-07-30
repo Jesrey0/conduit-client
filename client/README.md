@@ -68,7 +68,7 @@ external `CONDUIT_SESSION_ID` is supplied.
 
 ## Source-first admission and direct handoff
 
-For invite enrollment or promotion, the operator supplies one schema-v3 envelope pinned to an exact commit of this repository:
+For invite enrollment or promotion, the operator supplies one schema-v4 envelope pinned to an exact commit of this repository:
 
 ```bash
 git checkout <client.commit from conduit_provisioning.json>

@@ -1,1 +1,2 @@
 httpx>=0.27,<1
+cryptography>=44,<46

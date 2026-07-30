@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "keyId": "operator-f490ee0413ff3cfa",
+  "publicKey": "MCowBQYDK2VwAyEAn7lR1EiO6C3nSpD2-Th6zY3FUzrRpMx1bC-pAZ__tJQ",
+  "canonicalPayload": "{\"authorization\":{\"accessClass\":\"LIVE_PROBATION\",\"approvalRequired\":true,\"expiresAt\":\"2026-07-30T06:00:00Z\",\"issuedAt\":\"2026-07-30T05:00:00Z\",\"state\":\"AUTHORIZED_TO_REQUEST_ENROLLMENT\"},\"client\":{\"commit\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"entrypoint\":\"client/conduit_admission.py\",\"minimumPython\":\"3.12\",\"repository\":\"https://github.com/Jesrey0/conduit-client\"},\"credentialHandling\":{\"admissionReportPath\":\"/home/user/.conduit_admission_report.json\",\"enrollmentResumePath\":\"/home/user/.conduit_enrollment.json\",\"requiredMode\":\"0600\",\"resultingAuthPath\":\"/home/user/.conduit_auth.json\"},\"invite\":{\"id\":\"inv_vector\",\"secret\":\"synthetic-only\",\"singleUse\":true},\"lifecycle\":\"probation\",\"provisioningId\":\"prov_vector\",\"purpose\":\"ENROLLMENT\",\"requestedGrant\":{\"defaultWorkspaceId\":\"playground\",\"privileges\":[\"inspect\"],\"workspaceIds\":[\"playground\"]},\"schemaVersion\":4,\"server\":{\"url\":\"https://example.test/conduit\"}}",
+  "envelope": {
+    "schemaVersion": 4,
+    "provisioningId": "prov_vector",
+    "purpose": "ENROLLMENT",
+    "lifecycle": "probation",
+    "authorization": {
+      "state": "AUTHORIZED_TO_REQUEST_ENROLLMENT",
+      "accessClass": "LIVE_PROBATION",
+      "issuedAt": "2026-07-30T05:00:00Z",
+      "expiresAt": "2026-07-30T06:00:00Z",
+      "approvalRequired": true
+    },
+    "server": {
+      "url": "https://example.test/conduit"
+    },
+    "client": {
+      "repository": "https://github.com/Jesrey0/conduit-client",
+      "commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "entrypoint": "client/conduit_admission.py",
+      "minimumPython": "3.12"
+    },
+    "requestedGrant": {
+      "privileges": [
+        "inspect"
+      ],
+      "workspaceIds": [
+        "playground"
+      ],
+      "defaultWorkspaceId": "playground"
+    },
+    "invite": {
+      "id": "inv_vector",
+      "secret": "synthetic-only",
+      "singleUse": true
+    },
+    "credentialHandling": {
+      "resultingAuthPath": "/home/user/.conduit_auth.json",
+      "enrollmentResumePath": "/home/user/.conduit_enrollment.json",
+      "admissionReportPath": "/home/user/.conduit_admission_report.json",
+      "requiredMode": "0600"
+    },
+    "signature": {
+      "algorithm": "Ed25519",
+      "keyId": "operator-f490ee0413ff3cfa",
+      "value": "FXMMCswIA7syepQ6YsYfNY6UnkKBCnMciDwbhVD9E_w7_I7TAtkH22ZXTGn476_V7UWOl06xRDjb2yUVbTEsBQ"
+    }
+  },
+  "canonicalCases": [
+    {
+      "value": {
+        "z": "é",
+        "a": "line\nsep",
+        "emoji": "😀"
+      },
+      "canonical": "{\"a\":\"line\\nsep\",\"emoji\":\"😀\",\"z\":\"é\"}"
+    },
+    {
+      "value": {
+        "array": [
+          null,
+          true,
+          false,
+          0,
+          42,
+          "tab\tvalue"
+        ]
+      },
+      "canonical": "{\"array\":[null,true,false,0,42,\"tab\\tvalue\"]}"
+    }
+  ]
+}

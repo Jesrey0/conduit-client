@@ -9,7 +9,7 @@ A Conduit provisioning envelope is purpose-bound authorization to contact only i
 
 ## Operator confirmation
 
-In schema v3 the `conduit_provisioning.json` envelope is the sole authoritative provisioning
+In schema v4 the `conduit_provisioning.json` envelope is the sole authoritative provisioning
 artifact. No separate Markdown confirmation file is generated or required, and this
 repository does not produce one.
 
@@ -29,3 +29,7 @@ All timestamps are ISO-8601 absolute instants. `Z` means UTC. Compare parsed tim
 ## Boundaries
 
 The package does not authorize undeclared privileges or workspaces. Secrets must never be printed, uploaded, committed, or copied into a Conduit workspace. Pending enrollment is resumable through the dedicated local mode-`0600` enrollment record; the invite is never reused.
+
+## Envelope signatures
+
+Schema v4 envelopes are signed with Ed25519. The admission CLI verifies the signature against `keys/operators.json` from the pinned, checksum-verified client commit before any network contact. Unknown, revoked, malformed, or invalid signatures fail closed. Chat confirmation cannot substitute for or broaden a valid signature.
