@@ -4,6 +4,7 @@ import base64, json, re
 from datetime import datetime
 from pathlib import Path
 from typing import Any
+from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
 from cryptography.hazmat.primitives.serialization import load_der_public_key
 
@@ -61,5 +62,8 @@ def verify_envelope_signature(envelope: dict[str, Any], registry_path: Path) -> 
         if not retired or issued > datetime.fromisoformat(retired.replace("Z","+00:00")): raise ValueError("envelope was issued after key retirement")
     loaded = load_der_public_key(_b64url_decode(entry["publicKey"]))
     if not isinstance(loaded, Ed25519PublicKey): raise ValueError("operator key is not Ed25519")
-    loaded.verify(_b64url_decode(signature["value"]), signing_payload(envelope))
+    try:
+        loaded.verify(_b64url_decode(signature["value"]), signing_payload(envelope))
+    except InvalidSignature as exc:
+        raise ValueError("invalid provisioning signature") from exc
     return str(key_id)
