@@ -31,7 +31,7 @@ asyncio.run(main())
 
 ## Source-first admission
 
-The operator supplies one schema-v3 `conduit_provisioning.json` pinned to an exact commit of this repository.
+The operator supplies one schema-v4 `conduit_provisioning.json` pinned to an exact commit of this repository.
 
 ```bash
 git checkout <commit-from-envelope>

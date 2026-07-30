@@ -8,8 +8,9 @@ from typing import Any
 
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
+from client.conduit.signing import verify_envelope_signature
 
-HEADERS={"User-Agent":"conduit-client-admission/3","ngrok-skip-browser-warning":"1","Accept":"application/json"}
+HEADERS={"User-Agent":"conduit-client-admission/4","ngrok-skip-browser-warning":"1","Accept":"application/json"}
 STATE_HOME=Path(os.getenv("CONDUIT_STATE_HOME","/home/user")); AUTH=STATE_HOME/".conduit_auth.json"; RESUME=STATE_HOME/".conduit_enrollment.json"; REPORT=STATE_HOME/".conduit_admission_report.json"
 
 def fail(msg:str)->None: print(f"admission error: {msg}",file=sys.stderr); raise SystemExit(1)
@@ -37,8 +38,14 @@ def post(url:str,payload:dict[str,Any],timeout:int=30)->dict[str,Any]:
  req=urllib.request.Request(url,data=json.dumps(payload).encode(),headers={**HEADERS,"Content-Type":"application/json"},method="POST")
  with urllib.request.urlopen(req,timeout=timeout) as r: return json.loads(r.read().decode() or "{}")
 def load_envelope(path:Path,allow_expired_resume:bool=False)->dict[str,Any]:
- d=json.loads(path.read_text()); required={"schemaVersion","provisioningId","purpose","lifecycle","authorization","server","client","requestedGrant","invite","credentialHandling"}
- if not isinstance(d,dict) or d.get("schemaVersion")!=3 or not required.issubset(d): fail("invalid provisioning schema v3 envelope")
+ d=json.loads(path.read_text())
+ if not isinstance(d,dict): fail("invalid provisioning envelope")
+ # Establish the pinned public source trust root before consulting its key registry.
+ verify_source(d)
+ try: signing_key_id=verify_envelope_signature(d,ROOT/"keys/operators.json")
+ except Exception as exc: fail(f"provisioning signature verification failed: {exc}")
+ required={"schemaVersion","provisioningId","purpose","lifecycle","authorization","server","client","requestedGrant","invite","credentialHandling","signature"}
+ if d.get("schemaVersion")!=4 or set(d)!=required|({"replacesClientId"} if "replacesClientId" in d else set()): fail("invalid provisioning schema v4 envelope")
  a=d["authorization"]
  if a.get("state")!="AUTHORIZED_TO_REQUEST_ENROLLMENT" or a.get("accessClass") not in {"LIVE_PROBATION","REGULAR_OPERATOR_PROMOTION"} or a.get("approvalRequired") is not True: fail("invalid authorization contract")
  exp=datetime.fromisoformat(str(a.get("expiresAt","")).replace("Z","+00:00"))
@@ -49,6 +56,7 @@ def load_envelope(path:Path,allow_expired_resume:bool=False)->dict[str,Any]:
  h=d["credentialHandling"]
  expected={"resultingAuthPath":"/home/user/.conduit_auth.json","enrollmentResumePath":"/home/user/.conduit_enrollment.json","admissionReportPath":"/home/user/.conduit_admission_report.json","requiredMode":"0600"}
  if any(h.get(k)!=v for k,v in expected.items()): fail("unsupported credential-handling policy")
+ d["_verifiedSigningKeyId"]=signing_key_id
  return d
 def verify_source(d:dict[str,Any])->dict[str,str]:
  root=ROOT; c=d["client"]
@@ -61,7 +69,7 @@ def verify_source(d:dict[str,Any])->dict[str,str]:
  if norm(remote)!=norm(c["repository"]): fail("client repository mismatch")
  return {"repository":c["repository"],"commit":head}
 def summary(d:dict[str,Any],source:dict[str,str])->dict[str,Any]:
- return {"valid":True,"provisioningId":d["provisioningId"],"purpose":d["purpose"],"accessClass":d["authorization"]["accessClass"],"expiresAt":d["authorization"]["expiresAt"],"server":d["server"]["url"],"client":source,"requestedGrant":d["requestedGrant"],"networkUsed":False,"filesWritten":[]}
+ return {"valid":True,"provisioningId":d["provisioningId"],"purpose":d["purpose"],"accessClass":d["authorization"]["accessClass"],"expiresAt":d["authorization"]["expiresAt"],"server":d["server"]["url"],"client":source,"requestedGrant":d["requestedGrant"],"signingKeyId":d.get("_verifiedSigningKeyId"),"networkUsed":False,"filesWritten":[]}
 def enroll(d:dict[str,Any],timeout:int,poll:float)->tuple[str,str]:
  server=base_url(d["server"]["url"]); saved=private_json(RESUME)
  if saved:
@@ -97,6 +105,6 @@ def main()->int:
  args=ap.parse_args(); path=Path(args.provisioning); d=load_envelope(path,allow_expired_resume=args.cmd=="enroll" and RESUME.exists()); source=verify_source(d)
  if args.cmd=="inspect": print(json.dumps(summary(d,source),indent=2)); return 0
  token,cid=enroll(d,args.timeout,args.poll); actual=asyncio.run(verify(token,d)); atomic_json(AUTH,{"schemaVersion":1,"clientToken":token,"serverUrl":base_url(d["server"]["url"]),"savedAt":time.time()}); RESUME.unlink(missing_ok=True)
- report={"schemaVersion":1,"outcome":"ENROLLED","provisioningId":d["provisioningId"],"purpose":d["purpose"],"accessClass":d["authorization"]["accessClass"],"clientId":cid,**source,"requestedGrant":d["requestedGrant"],**actual,"authPath":str(AUTH),"authMode":"0600","resumeStatePresent":False,"secretsPrinted":False,"completedAt":datetime.now(timezone.utc).isoformat()}
+ report={"schemaVersion":1,"outcome":"ENROLLED","signingKeyId":d.get("_verifiedSigningKeyId"),"provisioningId":d["provisioningId"],"purpose":d["purpose"],"accessClass":d["authorization"]["accessClass"],"clientId":cid,**source,"requestedGrant":d["requestedGrant"],**actual,"authPath":str(AUTH),"authMode":"0600","resumeStatePresent":False,"secretsPrinted":False,"completedAt":datetime.now(timezone.utc).isoformat()}
  atomic_json(REPORT,report); print(json.dumps(report,indent=2)); return 0
 if __name__=="__main__": raise SystemExit(main())
