@@ -5,10 +5,10 @@ import argparse, asyncio, hashlib, json, os, re, stat, subprocess, sys, time, ur
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
-from client.conduit.signing import verify_envelope_signature
 
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
+from client.conduit.signing import verify_envelope_signature
 
 HEADERS={"User-Agent":"conduit-client-admission/4","ngrok-skip-browser-warning":"1","Accept":"application/json"}
 STATE_HOME=Path(os.getenv("CONDUIT_STATE_HOME","/home/user")); AUTH=STATE_HOME/".conduit_auth.json"; RESUME=STATE_HOME/".conduit_enrollment.json"; REPORT=STATE_HOME/".conduit_admission_report.json"
