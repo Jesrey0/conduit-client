@@ -23,6 +23,12 @@ its own `AGENTS.md`; read and follow that project guidance after connecting.
   workspace.
 - The only persisted client state is authorization (`.conduit_auth.json`); MCP session and negotiated protocol state remain in memory.
   Do not create session caches or lock files.
+- **Preview-only tools:** a grant with `inspect` but not `mutate` is still projected the
+  dry-run-capable filesystem tools (`write`, `edit`, `batch`, `delete`, `delete-batch`,
+  `move`, `copy`). Their descriptions are prefixed
+  `[preview only — requires dryRun=true]`, and calling one without `dryRun=true` is denied.
+  Reason from your grant, not from tool availability: `runtime.whoami` reports
+  `privileges` plus `previewOnlyTools`, the exact set that is preview-gated.
 
 ## Defaults
 
