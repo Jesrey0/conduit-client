@@ -26,7 +26,7 @@ class SigningTests(unittest.TestCase):
   with tempfile.TemporaryDirectory() as td:
    p=Path(td)/"keys.json"; p.write_text(json.dumps(registry)); self.assertEqual(verify_envelope_signature(env,p),"k1")
    tampered=json.loads(json.dumps(env)); tampered["server"]["url"]="https://evil.test"
-   with self.assertRaises(Exception): verify_envelope_signature(tampered,p)
+   with self.assertRaisesRegex(ValueError,"invalid provisioning signature"): verify_envelope_signature(tampered,p)
    unknown=json.loads(json.dumps(env)); unknown["signature"]["keyId"]="missing"
    with self.assertRaisesRegex(ValueError,"unknown"): verify_envelope_signature(unknown,p)
    registry["keys"][0]["status"]="retired"; registry["keys"][0]["retiredAt"]="2026-07-30T02:00:00Z"; p.write_text(json.dumps(registry))
