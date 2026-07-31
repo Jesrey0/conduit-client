@@ -52,6 +52,9 @@
     "git.add": {
       "retry": "idempotency-key"
     },
+    "git.blame": {
+      "retry": "read-safe"
+    },
     "git.branch": {
       "retry": "read-safe"
     },
