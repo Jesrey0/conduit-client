@@ -107,6 +107,12 @@ class GitNamespace:
         if start_timestamp: args["startTimestamp"] = start_timestamp
         if end_timestamp: args["endTimestamp"] = end_timestamp
         return self._c.structured(await self._c.call("git.log", args))
+    async def blame(self, path: str, *, repo_path: str = ".", revision: str | None = None, start_line: int | None = None, end_line: int | None = None) -> dict[str, Any]:
+        args: dict[str, Any] = {"repoPath": repo_path, "path": path}
+        if revision: args["revision"] = revision
+        if start_line is not None: args["startLine"] = start_line
+        if end_line is not None: args["endLine"] = end_line
+        return self._c.structured(await self._c.call("git.blame", args))
     async def show(self, revision: str, *, repo_path: str = ".") -> dict[str, Any]: return self._c.structured(await self._c.call("git.show", {"repoPath": repo_path, "revision": revision}))
     async def reset(self, *, mode: str = "mixed", revision: str | None = None, repo_path: str = ".", idempotency_key: str | None = None) -> dict[str, Any]:
         args: dict[str, Any] = {"repoPath": repo_path, "mode": mode}
