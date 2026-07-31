@@ -39,6 +39,17 @@ class InMemorySessionTests(unittest.TestCase):
             asyncio.run(client.close(terminate_session=False))
 
 
+    def test_git_merge_check_delegates_to_transport(self) -> None:
+        client = Conduit("https://host")
+        call = AsyncMock(return_value={"structuredContent": {"canMerge": True, "conflicts": []}})
+        try:
+            with patch.object(client.transport, "call", call):
+                result = asyncio.run(client.git.mergeCheck("main", "feature", repo_path=".", max_conflicts=50))
+            self.assertEqual(result, {"canMerge": True, "conflicts": []})
+            call.assert_awaited_once_with("git.merge-check", {"repoPath": ".", "targetRef": "main", "sourceRef": "feature", "maxConflicts": 50})
+        finally:
+            asyncio.run(client.close(terminate_session=False))
+
     def test_git_blame_delegates_to_transport(self) -> None:
         client = Conduit("https://host")
         call = AsyncMock(return_value={"structuredContent": {"lines": [], "totalLines": 0}})

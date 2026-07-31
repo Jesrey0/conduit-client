@@ -82,6 +82,9 @@
     "git.log": {
       "retry": "read-safe"
     },
+    "git.merge-check": {
+      "retry": "read-safe"
+    },
     "git.reset": {
       "retry": "idempotency-key"
     },
