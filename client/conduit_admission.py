@@ -81,13 +81,17 @@ def enroll(d:dict[str,Any],timeout:int,poll:float)->tuple[str,str]:
   rid,secret=created.get("requestId"),created.get("requestSecret")
   if not rid or not secret: fail("invalid enrollment response")
   atomic_json(RESUME,{"schemaVersion":1,"serverUrl":server,"inviteId":d["invite"]["id"],"provisioningId":d["provisioningId"],"requestId":rid,"requestSecret":secret,"savedAt":time.time()})
- print(json.dumps({"requestId":rid,"status":"pending"}))
  deadline=time.monotonic()+timeout
+ announced=False
  while time.monotonic()<deadline:
   status=post(server+"/admin/enroll/status",{"requestId":rid,"requestSecret":secret},max(30,timeout)); state=status.get("status")
   if state=="approved" and status.get("clientToken"): return str(status["clientToken"]),str(status.get("clientId", ""))
   if state=="denied": RESUME.unlink(missing_ok=True); fail("enrollment denied")
   if state!="pending": fail("unexpected enrollment status")
+  # Report pending only once approval is genuinely outstanding. A headless
+  # (auto-approving) invite returns the token on the first poll, so the operator
+  # never sees a misleading "pending" for an enrollment that already completed.
+  if not announced: print(json.dumps({"requestId":rid,"status":"pending"})); announced=True
   time.sleep(max(.25,poll))
  fail("approval timeout; resume state retained, rerun the same command")
 async def verify(token:str,d:dict[str,Any])->dict[str,Any]:
