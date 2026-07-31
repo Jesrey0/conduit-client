@@ -107,6 +107,10 @@ class GitNamespace:
         if start_timestamp: args["startTimestamp"] = start_timestamp
         if end_timestamp: args["endTimestamp"] = end_timestamp
         return self._c.structured(await self._c.call("git.log", args))
+    async def mergeCheck(self, target_ref: str, source_ref: str, *, repo_path: str = ".", max_conflicts: int | None = None) -> dict[str, Any]:
+        args: dict[str, Any] = {"repoPath": repo_path, "targetRef": target_ref, "sourceRef": source_ref}
+        if max_conflicts is not None: args["maxConflicts"] = max_conflicts
+        return self._c.structured(await self._c.call("git.merge-check", args))
     async def blame(self, path: str, *, repo_path: str = ".", revision: str | None = None, start_line: int | None = None, end_line: int | None = None) -> dict[str, Any]:
         args: dict[str, Any] = {"repoPath": repo_path, "path": path}
         if revision: args["revision"] = revision
