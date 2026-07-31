@@ -137,6 +137,13 @@ class FilesystemNamespace:
         if start_index is not None: args["startIndex"] = start_index
         if max_length is not None: args["maxLength"] = max_length
         return self._c.structured(await self._c.call("filesystem.read", args))
+    async def diff(self, path: str, *, against_path: str | None = None, against_content: str | None = None, context_lines: int | None = None, max_length: int | None = None) -> dict[str, Any]:
+        args: dict[str, Any] = {"path": path}
+        if against_path is not None: args["againstPath"] = against_path
+        if against_content is not None: args["againstContent"] = against_content
+        if context_lines is not None: args["contextLines"] = context_lines
+        if max_length is not None: args["maxLength"] = max_length
+        return self._c.structured(await self._c.call("filesystem.diff", args))
     async def readMulti(self, paths: list[str], *, max_length_per_file: int | None = None, max_total_length: int | None = None) -> dict[str, Any]:
         args: dict[str, Any] = {"paths": paths}
         if max_length_per_file is not None: args["maxLengthPerFile"] = max_length_per_file

@@ -13,6 +13,9 @@
     "filesystem.delete-batch": {
       "retry": "idempotency-key"
     },
+    "filesystem.diff": {
+      "retry": "read-safe"
+    },
     "filesystem.edit": {
       "retry": "idempotency-key"
     },

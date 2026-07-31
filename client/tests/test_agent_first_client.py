@@ -50,6 +50,20 @@ class InMemorySessionTests(unittest.TestCase):
         finally:
             asyncio.run(client.close(terminate_session=False))
 
+    def test_filesystem_diff_delegates_to_transport(self) -> None:
+        client = Conduit("https://host")
+        call = AsyncMock(return_value={"structuredContent": {"identical": False, "patch": "@@"}})
+        try:
+            with patch.object(client.transport, "call", call):
+                result = asyncio.run(client.files.diff("a.txt", against_path="b.txt", context_lines=1))
+            self.assertEqual(result, {"identical": False, "patch": "@@"})
+            call.assert_awaited_once_with(
+                "filesystem.diff",
+                {"path": "a.txt", "againstPath": "b.txt", "contextLines": 1},
+            )
+        finally:
+            asyncio.run(client.close(terminate_session=False))
+
     def test_terminal_wait_attaches_until_process_completes(self) -> None:
         client = Conduit("https://host")
         snapshots = [{"complete": False}, {"complete": True, "exitCode": 0}]
