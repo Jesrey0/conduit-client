@@ -38,6 +38,18 @@ class InMemorySessionTests(unittest.TestCase):
         finally:
             asyncio.run(client.close(terminate_session=False))
 
+
+    def test_git_blame_delegates_to_transport(self) -> None:
+        client = Conduit("https://host")
+        call = AsyncMock(return_value={"structuredContent": {"lines": [], "totalLines": 0}})
+        try:
+            with patch.object(client.transport, "call", call):
+                result = asyncio.run(client.git.blame("file.txt", repo_path=".", start_line=1, end_line=5))
+            self.assertEqual(result, {"lines": [], "totalLines": 0})
+            call.assert_awaited_once_with("git.blame", {"repoPath": ".", "path": "file.txt", "startLine": 1, "endLine": 5})
+        finally:
+            asyncio.run(client.close(terminate_session=False))
+
     def test_terminal_wait_attaches_until_process_completes(self) -> None:
         client = Conduit("https://host")
         snapshots = [{"complete": False}, {"complete": True, "exitCode": 0}]
