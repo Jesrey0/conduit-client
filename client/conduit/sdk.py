@@ -107,6 +107,10 @@ class GitNamespace:
         if start_timestamp: args["startTimestamp"] = start_timestamp
         if end_timestamp: args["endTimestamp"] = end_timestamp
         return self._c.structured(await self._c.call("git.log", args))
+    async def deleteBranch(self, branch_name: str, *, base_ref: str = "main", dry_run: bool = True, repo_path: str = ".", idempotency_key: str | None = None) -> dict[str, Any]:
+        args: dict[str, Any] = {"repoPath": repo_path, "branchName": branch_name, "baseRef": base_ref, "dryRun": dry_run}
+        if idempotency_key: args["idempotencyKey"] = idempotency_key
+        return self._c.structured(await self._c.call("git.delete-branch", args))
     async def mergeCheck(self, target_ref: str, source_ref: str, *, repo_path: str = ".", max_conflicts: int | None = None) -> dict[str, Any]:
         args: dict[str, Any] = {"repoPath": repo_path, "targetRef": target_ref, "sourceRef": source_ref}
         if max_conflicts is not None: args["maxConflicts"] = max_conflicts

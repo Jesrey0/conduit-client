@@ -39,6 +39,17 @@ class InMemorySessionTests(unittest.TestCase):
             asyncio.run(client.close(terminate_session=False))
 
 
+    def test_git_delete_branch_delegates_to_transport(self) -> None:
+        client = Conduit("https://host")
+        call = AsyncMock(return_value={"structuredContent": {"deleted": False, "wouldDelete": True, "safe": True}})
+        try:
+            with patch.object(client.transport, "call", call):
+                result = asyncio.run(client.git.deleteBranch("feat-1", base_ref="main", dry_run=True, repo_path="."))
+            self.assertEqual(result, {"deleted": False, "wouldDelete": True, "safe": True})
+            call.assert_awaited_once_with("git.delete-branch", {"repoPath": ".", "branchName": "feat-1", "baseRef": "main", "dryRun": True})
+        finally:
+            asyncio.run(client.close(terminate_session=False))
+
     def test_git_merge_check_delegates_to_transport(self) -> None:
         client = Conduit("https://host")
         call = AsyncMock(return_value={"structuredContent": {"canMerge": True, "conflicts": []}})
